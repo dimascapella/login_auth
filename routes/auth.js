@@ -49,8 +49,10 @@ router.post('/login', async (req, res, next) => {
     }
 
     // Create Toker
-    const token = jwt.sign({user}, process.env.TOKEN)
-    res.header('auth-token', token).status(200).json(token)
+    const token = jwt.sign({user}, process.env.TOKEN, {
+        expiresIn: '604800'
+    })
+    res.status(200).header("auth-token", "Bearer " + token).send({ "token": token });
 })
 
 module.exports = router

@@ -1,14 +1,15 @@
 const jwt = require('jsonwebtoken')
-required('dotenv/config')
+require('dotenv/config')
 
-// use after login
-function auth (req, res, next){
-    const token = req.header('auth-header')
+module.exports = function(req, res, next){
+    let token = req.headers.authorization;
     if(!token){
         return res.status(401).json('Access Denied')
     }
 
     try{
+        token = token.split(' ')[1]
+        if (token === 'null' || !token) return res.status(401).send('Unauthorized request');
         const verified = jwt.verify(token, process.env.TOKEN)
         req.user = verified
         next()
@@ -16,5 +17,3 @@ function auth (req, res, next){
         res.status(400).send('Invalid Token')
     }
 }
-
-module.export = auth
